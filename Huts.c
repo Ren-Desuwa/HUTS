@@ -4,6 +4,7 @@
     int = 0
     string = 1
 */
+//test
 int input(int type) {
     int input, status = scanf("%c",&input);
     if (status != 1 && getchar() != '\n') {
