@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /*
 Tubig bill (whole month)
@@ -6,24 +8,29 @@ Electricity bill (whole month)
 Gas (quarterly??)
 Subscription (wifi included static)
 */
+
 int file() {
+    char buffer[1024];
+    char* data;
 
-    FILE *file_out;
-    
-    file_out = fopen("test.txt","a");
+    FILE *file_out = fopen("test.csv","r");
+    if (file_out == NULL) {
+        printf("ERROR: could not open file");
+        exit(-1);
+    }
 
-    fputs("Jestotoy",file_out);
+    fgets(buffer, sizeof(buffer),file_out);
+    printf("%s",buffer);
+    data = strtok(buffer,",");
+    printf("%s",data);
+
+    data = strtok(NULL,",");
+    printf("%s",data);
 
     fclose(file_out);
 }
 
-float get_bill() {
-    for (int i = 0; i < 4; i++) {
-
-    }
-}
-
-int get_int_input() {
+int input_int() {
     int status,input;
     status = scanf("%d", &input);
     while (status != 1 && getchar() != '\n') {
@@ -33,39 +40,34 @@ int get_int_input() {
     }
     return input;
 }
-float get_float_input() {
+
+void input_string(char* input) {
     int status;
-    float input;
-    status = scanf("%f", &input);
-    while (status != 1 && getchar() != '\n') {
-        while (getchar() != '\n');
-        printf("Invalid input. Please try again : ");
-        status = scanf("%f", &input);
+    while (1) {
+        if (fgets(input, 128, stdin) != NULL) {
+            int len = strlen(input);
+            if (len > 0 && input[len - 1] == '\n') {
+                input[len - 1] = '\0';
+            }
+            break;
+        } else {
+            printf("Invalid input. Please try again : ");
+        };
     }
-    return input;
 }
 
-int get_input(int limit,char type) {
-    int result;
-    do {
-        result = get_int_input();
-
-
-    } while (1);
-    return result;
-}
-
-int main() {
-
+void display() {
     printf("Home Utility Tracking System");
     printf("\n[1] input/edit appliance");
     printf("\n[2] input electric meter");
     printf("\n[3] input your water meter");
     printf("\n[0] exit");
     printf("\n\n");
-
     printf("input your choice:");
+}
 
+int main() {
+    
 
-    return 0;
+    return file();
 }
