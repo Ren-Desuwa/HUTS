@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include "sqlite3.h"
-
 
 /*
 Tubig bill (whole month)
@@ -8,11 +6,15 @@ Electricity bill (whole month)
 Gas (quarterly??)
 Subscription (wifi included static)
 */
-void sql() {
-    sqlite3* db;
-    sqlite3_stmt* stmt;
-    sqlite3_open("myDatabase.db", &db);
+int file() {
+
+    FILE *file_out;
     
+    file_out = fopen("test.txt","a");
+
+    fputs("Jestotoy",file_out);
+
+    fclose(file_out);
 }
 
 float get_bill() {
@@ -63,7 +65,7 @@ int main() {
     printf("\n\n");
 
     printf("input your choice:");
-    sql();
+
 
     return 0;
 }
