@@ -1,32 +1,60 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <sqlite3.h>
+#include "sqlite3.h"
 
-/*  types: 
-    int = 0
-    string = 1
+
+/*
+Tubig bill (whole month)
+Electricity bill (whole month)
+Gas (quarterly??)
+Subscription (wifi included static)
 */
-//test
-int file() {
-
-    FILE *file_out;
+void sql() {
+    sqlite3* db;
+    sqlite3_stmt* stmt;
+    sqlite3_open("myDatabase.db", &db);
     
-    file_out = fopen("test.txt","a");
-
-    fputs("Jestotoy",file_out);
-
-    fclose(file_out);
 }
 
-int input(int type) {
-    int input, status = scanf("%c",&input);
-    if (status != 1 && getchar() != '\n') {
-        printf("done");
+float get_bill() {
+    for (int i = 0; i < 4; i++) {
+
+    }
+}
+
+int get_int_input() {
+    int status,input;
+    status = scanf("%d", &input);
+    while (status != 1 && getchar() != '\n') {
+        while (getchar() != '\n');
+        printf("Invalid input. Please try again : ");
+        status = scanf("%d", &input);
+    }
+    return input;
+}
+float get_float_input() {
+    int status;
+    float input;
+    status = scanf("%f", &input);
+    while (status != 1 && getchar() != '\n') {
+        while (getchar() != '\n');
+        printf("Invalid input. Please try again : ");
+        status = scanf("%f", &input);
     }
     return input;
 }
 
+int get_input(int limit,char type) {
+    int result;
+    do {
+        result = get_int_input();
+
+
+    } while (1);
+    return result;
+}
+
 int main() {
+
     printf("Home Utility Tracking System");
     printf("\n[1] input/edit appliance");
     printf("\n[2] input electric meter");
@@ -34,10 +62,8 @@ int main() {
     printf("\n[0] exit");
     printf("\n\n");
 
-    file();
-
     printf("input your choice:");
-    printf("%c", input(0));
+    sql();
 
     return 0;
 }
