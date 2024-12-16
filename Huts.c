@@ -12,23 +12,29 @@ Subscription (wifi included static)
 void file_read(char* file) {
     char buffer[1024];
     char* data;
+    int COLUMN_WIDTH = 20;
 
-    FILE *file_out = fopen(file,"r");
+    FILE *file_out = fopen(file, "r");
     if (file_out == NULL) {
-        printf("ERROR: could not open file");
+        printf("ERROR: could not open file\n");
         exit(-1);
     }
+
     printf("\n");
-    int k = 0;
-        printf("    ");
-    while (fgets(buffer, sizeof(buffer),file_out)) {
-        if (k++ != 0) printf("%d.  ",k);
-        data = strtok(buffer,",");
-        printf("%s\t",data);
-        while (data = strtok(NULL,",")) {
-            printf("%s\t\t",data);
+
+    int k = -1;
+    while (fgets(buffer, sizeof(buffer), file_out)) {
+        if (k++ != -1) printf("%d.", k); // Print row number aligned
+        else printf("  ");
+        data = strtok(buffer, ",");
+        
+        int columnIndex = 0; // Track column index for alignment
+        while (data != NULL) {
+            printf("%-*s", COLUMN_WIDTH, data); // Print each column with fixed width
+            data = strtok(NULL, ",");
+            columnIndex++;
         }
-        printf("\n");
+        printf("\n"); // New line after each row
     }
 
     fclose(file_out);
@@ -53,6 +59,17 @@ void file_edit(char* file,int edit_row, char* new_row) {
 
     while (fgets(buffer, sizeof(buffer), file_out)) {
         buffer[strcspn(buffer, "\n")] = '\0'; 
+
+        char result[1024];
+        int j = 0;
+        
+        for (int i = 0; buffer[i] != '\0'; i++) {
+            if (buffer[i] != ' ' && buffer[i] != '\t') { 
+                result[j++] = buffer[i]; 
+            }
+        }
+        result[j] = '\0'; 
+        strcpy(buffer, result);
 
         if (currentSize >= capacity) {
             capacity *= 2; 
@@ -131,6 +148,19 @@ void file_add(char* file,int add_row, char* new_row) {
 
     while (fgets(buffer, sizeof(buffer), file_out)) {
         buffer[strcspn(buffer, "\n")] = '\0'; 
+
+        char result[1024];
+        int j = 0; 
+
+        
+        for (int i = 0; buffer[i] != '\0'; i++) {
+            if (buffer[i] != ' ' && buffer[i] != '\t') { 
+                result[j++] = buffer[i]; 
+            }
+        }
+        result[j] = '\0'; 
+
+        strcpy(buffer, result);
 
         if (currentSize >= capacity) {
             capacity *= 2; 
@@ -229,30 +259,42 @@ void input_string(char* input) {
     }
 }
 
-void display() {
-
-    printf("Home Utility Tracking System");
-    printf("\n[1] input/edit appliance");
-    printf("\n[2] input/edit your bills");
-    printf("\n[3] input/edit your Subscription");
-    printf("\n[0] exit");
-    printf("\n\n");
-    printf("input your choice:");
-    switch (input_int()) {
-        case 1:
-            file_read("test.csv");
-            break;
-        case 2:
-            file_add("test.csv",2,"hiiii");
-            break;
-    
-        default:
-            break;
-    }
+void display_menu() {
+    printf("\n==============================\n");
+    printf("   Home Utility Tracking System\n");
+    printf("==============================\n");
+    printf("[1] View Items\n");
+    printf("[2] Add a Bill\n");
+    printf("[3] Manage Subscriptions\n");
+    printf("[0] Exit\n");
+    printf("==============================\n");
+    printf("Please enter your choice (0-3): ");
 }
 
 int main() {
-    
-    display();
+    int choice;
+
+    do {
+        display_menu();
+        choice = input_int();
+        switch (choice) {
+            case 1:
+                file_read("test.csv");
+                break;
+            case 2:
+                file_add("test.csv", 2, "michelle,controller,64.5");
+                break;
+            case 3:
+                printf("Managing subscriptions...\n"); 
+                break;
+            case 0:
+                printf("Exiting the program. Goodbye!\n");
+                break; 
+            default:
+                printf("Invalid choice, please try again.\n");
+                break;
+        }
+    } while (choice != 0); 
+
     return 0;
 }
