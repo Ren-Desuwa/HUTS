@@ -68,7 +68,7 @@ void input_string(char* input) {
 }
 
 void display() {
-    char choice;
+
     printf("Home Utility Tracking System");
     printf("\n[1] input/edit appliance");
     printf("\n[2] input electricity meter");
@@ -79,7 +79,14 @@ void display() {
     printf("\n[0] exit");
     printf("\n\n");
     printf("input your choice:");
-    input_string(choice);
+    switch (input_int()) {
+        case 1:
+            file_handle();
+            break;
+    
+        default:
+            break;
+    }
 }
 
 int main() {
