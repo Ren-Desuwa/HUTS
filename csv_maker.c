@@ -69,8 +69,8 @@ int main() {
         if (i == 2) printf("\n");
     }
 
-    printf("\n");
 
+    printf("\n");
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < column; j++) {
             if (i == 0) printf("%s",header[j]);

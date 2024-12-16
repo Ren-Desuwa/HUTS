@@ -9,9 +9,10 @@ Gas (quarterly??)
 Subscription (wifi included static)
 */
 
-int file() {
+int file_handle() {
     char buffer[1024];
     char* data;
+    int row,column;
 
     FILE *file_out = fopen("test.csv","r");
     if (file_out == NULL) {
@@ -23,9 +24,19 @@ int file() {
     printf("%s",buffer);
     data = strtok(buffer,",");
     printf("%s",data);
+    char filetype = *data;
 
     data = strtok(NULL,",");
     printf("%s",data);
+    row = *data - '0';
+
+    while (fgets(buffer, sizeof(buffer),file_out)) {
+        /* code */
+    }
+    
+    fgets(buffer, sizeof(buffer),file_out);
+    printf("%s",buffer);
+
 
     fclose(file_out);
 }
@@ -69,5 +80,5 @@ void display() {
 int main() {
     
 
-    return file();
+    return file_handle();
 }
