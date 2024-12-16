@@ -12,7 +12,7 @@ Subscription (wifi included static)
 void file_read(char* file) {
     char buffer[1024];
     char* data;
-    int COLUMN_WIDTH = 20;
+    int COLUMN_WIDTH = 25;
 
     FILE *file_out = fopen(file, "r");
     if (file_out == NULL) {
@@ -24,22 +24,21 @@ void file_read(char* file) {
 
     int k = -1;
     while (fgets(buffer, sizeof(buffer), file_out)) {
-        if (k++ != -1) printf("%d.", k); // Print row number aligned
-        else printf("  ");
+        if (k++ != -1) printf("%d. ", k); 
+        else printf("   ");
         data = strtok(buffer, ",");
         
-        int columnIndex = 0; // Track column index for alignment
+        int columnIndex = 0; 
         while (data != NULL) {
-            printf("%-*s", COLUMN_WIDTH, data); // Print each column with fixed width
+            printf("%-*s", COLUMN_WIDTH, data); 
             data = strtok(NULL, ",");
             columnIndex++;
         }
-        printf("\n"); // New line after each row
+        printf("\n"); 
     }
 
     fclose(file_out);
 }
-
 void file_edit(char* file,int edit_row, char* new_row) {
     char buffer[1024];
     char **file_data = NULL;
@@ -128,8 +127,93 @@ void file_edit(char* file,int edit_row, char* new_row) {
 
     printf("Row %d edited successfully.\n", edit_row);
 }
+void file_append(char* file, char* new_row) {
+    char buffer[1024];
+    char **file_data = NULL;
+    int currentSize = 0, capacity = 1;
 
-void file_add(char* file,int add_row, char* new_row) {
+    FILE *file_out = fopen(file, "r");
+    if (file_out == NULL) {
+        printf("ERROR: could not open file\n");
+        exit(-1);
+    }
+
+    
+    file_data = (char **)malloc(capacity * sizeof(char *));
+    if (file_data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(-1);
+    }
+
+    
+    while (fgets(buffer, sizeof(buffer), file_out)) {
+        buffer[strcspn(buffer, "\n")] = '\0'; 
+
+        
+        if (currentSize >= capacity) {
+            capacity *= 2; 
+            char **temp = realloc(file_data, capacity * sizeof(char *));
+            if (temp == NULL) {
+                fprintf(stderr, "Memory reallocation failed\n");
+                break; 
+            }
+            file_data = temp; 
+        }
+
+        
+        file_data[currentSize] = (char *)malloc((strlen(buffer) + 1) * sizeof(char));
+        if (file_data[currentSize] == NULL) {
+            fprintf(stderr, "Memory allocation for string failed\n");
+            break; 
+        }
+        
+        strcpy(file_data[currentSize], buffer); 
+        currentSize++; 
+    }
+
+    fclose(file_out); 
+
+    
+    char **new_file_data = (char **)malloc((currentSize + 1) * sizeof(char *));
+    if (new_file_data == NULL) {
+        fprintf(stderr, "Memory allocation failed for new data\n");
+        return;
+    }
+
+    
+    for (int i = 0; i < currentSize; i++) {
+        new_file_data[i] = file_data[i]; 
+    }
+
+    
+    new_file_data[currentSize] = (char *)malloc((strlen(new_row) + 1) * sizeof(char));
+    if (new_file_data[currentSize] == NULL) {
+        fprintf(stderr, "Memory allocation for new row failed\n");
+        return;
+    }
+    
+    strcpy(new_file_data[currentSize], new_row); 
+
+    free(file_data); 
+
+    
+    FILE *file_in = fopen(file, "w"); 
+    if (file_in == NULL) {
+        printf("ERROR: could not open file for writing\n");
+        exit(-1);
+    }
+
+    for (int i = 0; i < currentSize + 1; i++) {
+        fprintf(file_in, "%s\n", new_file_data[i]); 
+        free(new_file_data[i]); 
+    }
+
+    free(new_file_data); 
+    fclose(file_in); 
+
+    printf("Row added successfully.\n");
+}
+void file_insert(char* file,int insert_row, char* new_row) {
     char buffer[1024];
     char **file_data = NULL;
     int currentSize = 0, capacity = 1;
@@ -184,7 +268,7 @@ void file_add(char* file,int add_row, char* new_row) {
 
     fclose(file_out); 
 
-    if (add_row < 0 || add_row > currentSize) {
+    if (insert_row < 0 || insert_row > currentSize) {
         printf("ERROR: Invalid row number for insertion\n");
         for (int i = 0; i < currentSize; i++) {
             free(file_data[i]);
@@ -200,9 +284,9 @@ void file_add(char* file,int add_row, char* new_row) {
     }
 
     for (int i = 0; i < currentSize + 1; i++) {
-        if (i < add_row) {
+        if (i < insert_row) {
             new_file_data[i] = file_data[i]; 
-        } else if (i == add_row) {
+        } else if (i == insert_row) {
             new_file_data[i] = (char *)malloc((strlen(new_row) + 1) * sizeof(char));
             if (new_file_data[i] == NULL) {
                 fprintf(stderr, "Memory allocation for new row failed\n");
@@ -232,7 +316,98 @@ void file_add(char* file,int add_row, char* new_row) {
 
     printf("Row added successfully.\n");
 }
+void file_delete(char* file, int delete_row) {
+    char buffer[1024];
+    char **file_data = NULL;
+    int currentSize = 0, capacity = 1;
 
+    FILE *file_out = fopen(file, "r");
+    if (file_out == NULL) {
+        printf("ERROR: could not open file\n");
+        exit(-1);
+    }
+
+    
+    file_data = (char **)malloc(capacity * sizeof(char *));
+    if (file_data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(-1);
+    }
+
+    
+    while (fgets(buffer, sizeof(buffer), file_out)) {
+        buffer[strcspn(buffer, "\n")] = '\0'; 
+
+        
+        if (currentSize >= capacity) {
+            capacity *= 2; 
+            char **temp = realloc(file_data, capacity * sizeof(char *));
+            if (temp == NULL) {
+                fprintf(stderr, "Memory reallocation failed\n");
+                break; 
+            }
+            file_data = temp; 
+        }
+
+        
+        file_data[currentSize] = (char *)malloc((strlen(buffer) + 1) * sizeof(char));
+        if (file_data[currentSize] == NULL) {
+            fprintf(stderr, "Memory allocation for string failed\n");
+            break; 
+        }
+        
+        strcpy(file_data[currentSize], buffer); 
+        currentSize++; 
+    }
+
+    fclose(file_out); 
+
+    
+    if (delete_row < 0 || delete_row >= currentSize) {
+        printf("ERROR: Invalid row number for deletion\n");
+        for (int i = 0; i < currentSize; i++) {
+            free(file_data[i]);
+        }
+        free(file_data);
+        return;
+    }
+
+    
+    char **new_file_data = (char **)malloc((currentSize - 1) * sizeof(char *));
+    if (new_file_data == NULL) {
+        fprintf(stderr, "Memory allocation failed for new data\n");
+        return;
+    }
+
+    
+    for (int i = 0, j = 0; i < currentSize; i++) {
+        if (i != delete_row) { 
+            new_file_data[j] = file_data[i];
+            j++;
+        } else {
+            free(file_data[i]); 
+        }
+    }
+
+    free(file_data); 
+
+    
+    FILE *file_in = fopen(file, "w"); 
+    if (file_in == NULL) {
+        printf("ERROR: could not open file for writing\n");
+        exit(-1);
+    }
+
+    for (int i = 0; i < currentSize - 1; i++) {
+        fprintf(file_in, "%s\n", new_file_data[i]); 
+        free(new_file_data[i]); 
+    }
+
+    free(new_file_data); 
+    fclose(file_in); 
+
+    printf("Row deleted successfully.\n");
+}
 int input_int() {
     int status,input;
     status = scanf("%d", &input);
@@ -243,7 +418,6 @@ int input_int() {
     }
     return input;
 }
-
 void input_string(char* input) {
     int status;
     while (1) {
@@ -258,38 +432,148 @@ void input_string(char* input) {
         };
     }
 }
+void display_menu(int display_type) {
+    switch (display_type) {
+        case -1:
+            printf("\n==============================\n");
+            printf("   Home Utility Tracking System\n");
+            printf("==============================\n");
+            printf("[1] View Items\n");
+            printf("[2] Manage Bills\n");
+            printf("[3] Manage Subscriptions\n");
+            printf("[0] Exit\n");
+            printf("==============================\n");
+            printf("Please enter your choice (0-3): ");
+            break;
 
-void display_menu() {
-    printf("\n==============================\n");
-    printf("   Home Utility Tracking System\n");
-    printf("==============================\n");
-    printf("[1] View Items\n");
-    printf("[2] Add a Bill\n");
-    printf("[3] Manage Subscriptions\n");
-    printf("[0] Exit\n");
-    printf("==============================\n");
-    printf("Please enter your choice (0-3): ");
+        case 1:
+            printf("\n==============================\n");
+            printf("        View Items Menu       \n");
+            printf("==============================\n");
+            printf("[1] Add an Appliance\n");
+            printf("[2] Edit an Appliance\n");
+            printf("[3] Delete an Appliance\n");
+            printf("[0] Back to Main Menu\n");
+            printf("==============================\n");
+            printf("Please enter your choice (0-3): ");
+            break;
+
+        case 2:
+            printf("\n==============================\n");
+            printf("        Manage Bills Menu      \n");
+            printf("==============================\n");
+            printf("[1] Add a Bill\n");
+            printf("[2] Edit a Bill\n");
+            printf("[3] Delete a Bill\n");
+            printf("[0] Back to Main Menu\n");
+            printf("==============================\n");
+            printf("Please enter your choice (0-3): ");
+            break;
+
+        case 3:
+            printf("\n==============================\n");
+            printf("     Manage Subscriptions Menu  \n");
+            printf("==============================\n");
+            printf("[1] Add a Subscription\n");
+            printf("[2] Edit a Subscription\n");
+            printf("[3] Delete a Subscription\n");
+            printf("[0] Back to Main Menu\n");
+            printf("==============================\n");
+            printf("Please enter your choice (0-3): ");
+            break;
+
+        default:
+            break;
+    }
+}
+
+int input_int() {
+    int value;
+    scanf("%d", &value);
+    return value;
 }
 
 int main() {
-    int choice;
+    int choice, choice2 = 1;
 
     do {
-        display_menu();
+        display_menu(-1);
         choice = input_int();
+        
         switch (choice) {
             case 1:
-                file_read("test.csv");
+                do {
+                    file_read("Appliances.csv"); // Assuming this function is defined
+                    display_menu(1);
+                    choice2 = input_int();
+                    
+                    switch (choice2) {
+                        case 1:
+                            file_insert("Appliances.csv", 1, "New Appliance Data"); // Placeholder
+                            break;
+                        case 2:
+                            file_insert("Appliances.csv", 2, "Updated Appliance Data"); // Placeholder
+                            break;
+                        case 3:
+                            file_delete("Appliances.csv", 1); // Placeholder for delete function
+                            break;
+                        case 0:
+                            break; // Go back to the main menu
+                        default:
+                            printf("Invalid choice, please try again.\n");
+                            break;
+                    }
+                } while (choice2 != 0);
                 break;
+
             case 2:
-                file_add("test.csv", 2, "michelle,controller,64.5");
+                display_menu(2);
+                file_read("Bills.csv"); // Assuming this function is defined
+                choice2 = input_int();
+                switch (choice2) {
+                        case 1:
+                            file_insert("Bills.csv", 1, "New Bills Data"); // Placeholder
+                            break;
+                        case 2:
+                            file_insert("Bills.csv", 2, "Updated Bills Data"); // Placeholder
+                            break;
+                        case 3:
+                            file_delete("Bills.csv", 1); // Placeholder for delete function
+                            break;
+                        case 0:
+                            break; // Go back to the main menu
+                        default:
+                            printf("Invalid choice, please try again.\n");
+                            break;
+                    }
                 break;
+
             case 3:
-                printf("Managing subscriptions...\n"); 
+                display_menu(3);
+                file_read("Subscriptions.csv"); // Assuming this function is defined
+                choice2 = input_int();
+                switch (choice2) {
+                        case 1:
+                            file_insert("Subscriptions.csv", 1, "New Subscriptions Data"); // Placeholder
+                            break;
+                        case 2:
+                            file_insert("Subscriptions.csv", 2, "Updated Subscriptions Data"); // Placeholder
+                            break;
+                        case 3:
+                            file_delete("Subscriptions.csv", 1); // Placeholder for delete function
+                            break;
+                        case 0:
+                            break; // Go back to the main menu
+                        default:
+                            printf("Invalid choice, please try again.\n");
+                            break;
+                    }
                 break;
+
             case 0:
                 printf("Exiting the program. Goodbye!\n");
                 break; 
+                
             default:
                 printf("Invalid choice, please try again.\n");
                 break;
