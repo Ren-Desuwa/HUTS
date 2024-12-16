@@ -9,10 +9,10 @@ Gas (quarterly??)
 Subscription (wifi included static)
 */
 
-int file_handle() {
+int file_read() {
     char buffer[1024];
     char* data;
-    int row,column;
+    int column;
 
     FILE *file_out = fopen("test.csv","r");
     if (file_out == NULL) {
@@ -20,21 +20,17 @@ int file_handle() {
         exit(-1);
     }
 
-    fgets(buffer, sizeof(buffer),file_out);
-    data = strtok(buffer,",");
-    char file_name = *data;
-    data = strtok(NULL,",");
-    row = *data - '0';
-
     while (fgets(buffer, sizeof(buffer),file_out)) {
-        for (int i = 0; i < row; i++) {
-            data = strtok(buffer,",");
-            printf("%s",data);
+        data = strtok(buffer,",");
+        printf("%s\t\t",data);
+        while (data = strtok(NULL,",")) {
+            printf("%s\t\t",data);
         }
+        printf("\n");
     }
 
-
     fclose(file_out);
+    return 0;
 }
 
 int input_int() {
@@ -79,7 +75,7 @@ void display() {
     printf("input your choice:");
     switch (input_int()) {
         case 1:
-            file_handle();
+            file_read();
             break;
     
         default:
@@ -89,6 +85,6 @@ void display() {
 
 int main() {
     
-display();
-    return file_handle();
+    display();
+    return 0;
 }
