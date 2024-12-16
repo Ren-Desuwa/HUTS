@@ -71,11 +71,13 @@ void display() {
 
     printf("Home Utility Tracking System");
     printf("\n[1] input/edit appliance");
-    printf("\n[2] input electricity meter");
-    printf("\n[3] input your water meter");
-    printf("\n[4] input your electricity bill");
-    printf("\n[5] input your water bill");
-    printf("\n[6] input your water meter");
+    printf("\n[2] input/edit electricity meter");
+    printf("\n[3] input/edit your water meter");
+    printf("\n[4] input/edit your electricity bill");
+    printf("\n[5] input/edit your water bill");
+    printf("\n[6] input/edit your water meter");
+    printf("\n[7] input/edit your Subscription");
+    printf("\n[8] input/edit your Gas");
     printf("\n[0] exit");
     printf("\n\n");
     printf("input your choice:");
