@@ -21,21 +21,17 @@ int file_handle() {
     }
 
     fgets(buffer, sizeof(buffer),file_out);
-    printf("%s",buffer);
     data = strtok(buffer,",");
-    printf("%s",data);
-    char filetype = *data;
-
+    char file_name = *data;
     data = strtok(NULL,",");
-    printf("%s",data);
     row = *data - '0';
 
     while (fgets(buffer, sizeof(buffer),file_out)) {
-        /* code */
+        for (int i = 0; i < row; i++) {
+            data = strtok(buffer,",");
+            printf("%s",data);
+        }
     }
-    
-    fgets(buffer, sizeof(buffer),file_out);
-    printf("%s",buffer);
 
 
     fclose(file_out);
