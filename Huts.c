@@ -70,7 +70,9 @@ void input_string(char* input) {
 void display() {
     char choice;
     printf("Home Utility Tracking System");
- 
+    printf("\n[1] input/edit appliance");
+    printf("\n[2] input electric meter");
+    printf("\n[3] input your water meterth");
     printf("\n[0] exit");
     printf("\n\n");
     printf("input your choice:");
