@@ -5,7 +5,6 @@
 /*
 Tubig bill (whole month)
 Electricity bill (whole month)
-Gas (quarterly??)
 Subscription (wifi included static)
 NATHANIEL
 */
