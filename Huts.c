@@ -487,11 +487,6 @@ void display_menu(int display_type) {
     }
 }
 
-int input_int() {
-    int value;
-    scanf("%d", &value);
-    return value;
-}
 
 int main() {
     int choice, choice2 = 1;
