@@ -7,7 +7,6 @@ Tubig bill (whole month)
 Electricity bill (whole month)
 Gas (quarterly??)
 Subscription (wifi included static)
-NATHANIEL
 */
 
 void file_read(char* file) {
@@ -488,6 +487,11 @@ void display_menu(int display_type) {
     }
 }
 
+int input_int() {
+    int value;
+    scanf("%d", &value);
+    return value;
+}
 
 int main() {
     int choice, choice2 = 1;
